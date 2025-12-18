@@ -9,11 +9,17 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { DadosService } from '../services/dado.service';
 import { Dados } from '../entities/dado.entity';
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Dados') 
+@UseGuards(JwtAuthGuard)
 @Controller('/dados')
+@ApiBearerAuth()
 export class DadosController {
   constructor(private readonly dadosService: DadosService) {}
 
