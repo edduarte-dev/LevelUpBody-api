@@ -8,7 +8,6 @@ export class UsuarioController {
  
     constructor(private readonly usuarioService: UsuarioService) { }
 
-
     @Get('/all')
     @HttpCode(HttpStatus.OK)
     findAll(): Promise<Usuario[]>{
