@@ -9,19 +9,19 @@ import { UsuarioModule } from './usuarios/usuario.module';
 
 @Module({
   imports: [
-  TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'root',
-    database: 'db_levelup',
-    entities: [Dados, Usuario],
-    synchronize: true,
-    logging: true,
-  }),
-  DadosModule,
-  UsuarioModule,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'db_levelup',
+      entities: [Dados, Usuario],
+      synchronize: true,
+      logging: true,
+    }),
+    DadosModule,
+    UsuarioModule,
   ],
   controllers: [AppController],
   providers: [AppService],
