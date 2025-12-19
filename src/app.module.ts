@@ -7,7 +7,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from './usuarios/entities/usuario.entity';
 import { UsuarioModule } from './usuarios/usuario.module';
 import { AuthModule } from './auth/auth.module';
-import { UsuarioLogin } from './auth/entities/usuarioLogin.entity';
+import { ClassificacaoImc } from './classificacao/entities/classificacao.entity';
+import { ClassificacaoImcModule } from './classificacao/classificacao.module';
+
 
 @Module({
   imports: [
@@ -18,13 +20,14 @@ import { UsuarioLogin } from './auth/entities/usuarioLogin.entity';
       username: 'root',
       password: 'root',
       database: 'db_levelup',
-      entities: [Dados, Usuario, UsuarioLogin],
+      entities: [Dados, Usuario, ClassificacaoImc],
       synchronize: true,
       logging: true,
     }),
     DadosModule,
     UsuarioModule,
     AuthModule,
+    ClassificacaoImcModule
   ],
   controllers: [AppController],
   providers: [AppService],

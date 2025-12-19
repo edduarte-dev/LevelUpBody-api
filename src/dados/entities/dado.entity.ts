@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Usuario } from '../../usuarios/entities/usuario.entity';
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { ClassificacaoImc } from '../../classificacao/entities/classificacao.entity';
 
 @Entity({ name: 'tb_dados' })
 export class Dados {
@@ -28,6 +29,17 @@ export class Dados {
   @Column()
   @ApiProperty()
   imc: number;
+
+  @Column({ length: 30 })
+@ApiProperty()
+classificacao: string;
+
+@ManyToOne(() => ClassificacaoImc, (classificacaoImc) => classificacaoImc.dados,{
+  onDelete: "CASCADE"
+})
+classificacaoImc: ClassificacaoImc;
+
+
 
   @ApiProperty()
   @ManyToOne(() => Usuario, (usuario) => usuario.dados, {

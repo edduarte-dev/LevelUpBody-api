@@ -19,8 +19,17 @@ export class DadosService {
     private usuarioRepository: Repository<Usuario>,
   ) {}
 
+  private classificacaoImc(imc: number): string {
+    if (imc < 18.5) return 'Abaixo do peso';
+    if (imc < 25) return 'Peso normal';
+    if (imc < 30) return 'Sobrepeso';
+    return 'Obesidade';
+  }
+
   async findAll(): Promise<Dados[]> {
-    return this.dadosRepository.find({ relations: ['usuario'] });
+    return this.dadosRepository.find({
+      relations: ['usuario'],
+    });
   }
 
   async findById(id: number): Promise<Dados> {
@@ -52,12 +61,15 @@ export class DadosService {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
 
-    const imc = dados.peso / (dados.altura * dados.altura);
+    // Função Especial
+    const imcCalculado = dados.peso / (dados.altura * dados.altura);
+    const imcFormatado = Number(imcCalculado.toFixed(2));
 
-    dados.imc = Number(imc.toFixed(2));
+    dados.imc = imcFormatado;
+    dados.classificacao = this.classificacaoImc(imcFormatado);
     dados.usuario = usuario;
 
-    return this.dadosRepository.save(dados);
+    return await this.dadosRepository.save(dados);
   }
 
   async update(dados: Dados): Promise<Dados> {
