@@ -18,7 +18,7 @@ import { ClassificacaoImcModule } from './classificacao/classificacao.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'root',
+      password: 'Souprogramadora520',
       database: 'db_levelup',
       entities: [Dados, Usuario, ClassificacaoImc],
       synchronize: true,
