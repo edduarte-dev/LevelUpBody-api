@@ -7,8 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-  .setTitle('Blog Pessoal')
-  .setDescription('Projeto Blog Pessoal')
+  .setTitle('Level Up Body API')
+  .setDescription('Projeto Level Up Body - Generation Brasil')
   .setContact("Generation Brasil","http://www.generationbrasil.online","generation@email.com")
   .setVersion('1.0')
   .addBearerAuth()
