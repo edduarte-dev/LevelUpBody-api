@@ -26,13 +26,13 @@ export class Dados {
   @ApiProperty()
   objetivo: string;
 
-  @Column()
+  @Column({nullable:true})
   @ApiProperty()
   imc: number;
 
-  @Column({ length: 30 })
-@ApiProperty()
-classificacao: string;
+  @Column({ length: 30 , nullable:true})
+  @ApiProperty()
+  classificacao: string;
 
 @ManyToOne(() => ClassificacaoImc, (classificacaoImc) => classificacaoImc.dados,{
   onDelete: "CASCADE"

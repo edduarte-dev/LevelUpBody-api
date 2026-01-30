@@ -69,7 +69,12 @@ export class DadosService {
     dados.classificacao = this.classificacaoImc(imcFormatado);
     dados.usuario = usuario;
 
+  
+
     return await this.dadosRepository.save(dados);
+
+
+
   }
 
   async update(dados: Dados): Promise<Dados> {
