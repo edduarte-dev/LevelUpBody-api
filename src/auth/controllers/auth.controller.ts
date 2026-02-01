@@ -21,9 +21,7 @@ class GoogleLoginDto {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // ============================
-  // 🔐 LOGIN TRADICIONAL (LOCAL)
-  // ============================
+
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('/logar')
@@ -31,9 +29,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  // ============================
-  // 🔐 LOGIN COM GOOGLE
-  // ============================
+
   @HttpCode(HttpStatus.OK)
   @Post('/google')
   async loginWithGoogle(@Body() body: GoogleLoginDto) {

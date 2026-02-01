@@ -14,12 +14,12 @@ import { DevService } from './data/service/dev.service';
 
 @Module({
   imports: [
-    // 🔑 carrega o .env de forma GLOBAL
+   
     ConfigModule.forRoot({
       isGlobal: true,
     }),
 
-    // 🔑 TypeORM usando DevService + ConfigService
+   
     TypeOrmModule.forRootAsync({
       useClass: DevService,
     }),

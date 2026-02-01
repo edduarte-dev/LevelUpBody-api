@@ -20,9 +20,7 @@ export class AuthService {
     private googleService: GoogleService,
   ) {}
 
-  // ============================
-  // 🔐 LOGIN TRADICIONAL (LOCAL)
-  // ============================
+
   async validateUser(username: string, password: string) {
     const usuario = await this.usuarioService.findByUsuario(username);
 
@@ -49,7 +47,7 @@ export class AuthService {
       throw new UnauthorizedException('Senha inválida');
     }
 
-    // remove senha do retorno
+  
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { senha, ...resultado } = usuario;
     return resultado;
@@ -75,9 +73,7 @@ export class AuthService {
     };
   }
 
-  // ============================
-  // 🔐 LOGIN COM GOOGLE (CORRIGIDO)
-  // ============================
+
   async loginWithGoogle(idToken: string) {
     if (!idToken) {
       throw new UnauthorizedException('ID Token não informado');
@@ -86,7 +82,7 @@ export class AuthService {
     let googleUser;
 
     try {
-      // 🔍 valida token com o Google (ponto CRÍTICO)
+     
       googleUser = await this.googleService.verifyToken(idToken);
     } catch {
       throw new UnauthorizedException('Token do Google inválido');
@@ -94,7 +90,7 @@ export class AuthService {
 
     let usuario = await this.usuarioService.findByUsuario(googleUser.email);
 
-    // 🆕 usuário não existe → cria
+  
     if (!usuario) {
       const novoUsuario: Usuario = {
         id: undefined as any,
@@ -110,7 +106,7 @@ export class AuthService {
       usuario = await this.usuarioService.create(novoUsuario);
     }
 
-    // ⚠️ usuário existe mas é LOCAL
+  
     if (usuario.provider === 'LOCAL') {
       throw new HttpException(
         'Usuário já cadastrado com senha. Use login tradicional.',
