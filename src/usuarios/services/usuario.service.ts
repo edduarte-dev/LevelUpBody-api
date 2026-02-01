@@ -35,35 +35,30 @@ export class UsuarioService {
     return usuario;
   }
 
- 
-  async create(usuario: Usuario): Promise<Usuario> {
-    const buscaUsuario = await this.findByUsuario(usuario.usuario);
 
-    if (buscaUsuario) {
+  async create(usuario: Usuario): Promise<Usuario> {
+    const usuarioExistente = await this.findByUsuario(usuario.usuario);
+
+    if (usuarioExistente) {
       throw new HttpException('O usuário já existe!', HttpStatus.BAD_REQUEST);
     }
 
-  
-    if (usuario.provider === 'LOCAL') {
-      if (!usuario.senha) {
-        throw new HttpException(
-          'Senha é obrigatória para cadastro local',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+ 
+    usuario.provider = 'LOCAL';
 
-      usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
+    if (!usuario.senha) {
+      throw new HttpException(
+        'Senha é obrigatória para cadastro local',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-   
-    if (usuario.provider === 'GOOGLE') {
-      usuario.senha = null;
-    }
+    usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
 
     return this.usuarioRepository.save(usuario);
   }
 
-
+ 
   async update(usuario: Usuario): Promise<Usuario> {
     const usuarioExistente = await this.findById(usuario.id);
 
@@ -77,22 +72,22 @@ export class UsuarioService {
 
   
     if (
-      usuario.provider === 'LOCAL' &&
+      usuarioExistente.provider === 'LOCAL' &&
       usuario.senha &&
       usuario.senha !== usuarioExistente.senha
     ) {
       usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
-    }
-
- 
-    if (usuario.provider === 'GOOGLE') {
+    } else {
       usuario.senha = usuarioExistente.senha;
     }
+
+    usuario.provider = usuarioExistente.provider;
+    usuario.googleId = usuarioExistente.googleId;
 
     return this.usuarioRepository.save(usuario);
   }
 
-
+ 
   async delete(id: number): Promise<DeleteResult> {
     await this.findById(id);
     return this.usuarioRepository.delete(id);
