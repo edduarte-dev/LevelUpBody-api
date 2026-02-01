@@ -8,18 +8,19 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { jwtConstants } from './constants/constants';
 import { Bcrypt } from './bcrypt/bcrypt';
 import { UsuarioModule } from '../usuarios/usuario.module';
+import { GoogleService } from './google/google.service';
 
 @Module({
-    imports: [
-        UsuarioModule,
-        PassportModule,
-        JwtModule.register({
-            secret: jwtConstants.secret,
-            signOptions:{expiresIn: '1h'},
-        }),
-    ],
-    providers: [AuthService, LocalStrategy, JwtStrategy, Bcrypt],
-    controllers: [AuthController],
-    exports: [AuthService, Bcrypt],
+  imports: [
+    UsuarioModule,
+    PassportModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '1h' },
+    }),
+  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, Bcrypt, GoogleService],
+  controllers: [AuthController],
+  exports: [AuthService, Bcrypt],
 })
-export class AuthModule { }
+export class AuthModule {}

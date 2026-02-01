@@ -1,39 +1,58 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Dados } from '../../dados/entities/dado.entity';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty } from 'class-validator';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Dados } from '../../dados/entities/dado.entity';
 
-
-@Entity({ name: "tb_usuarios"})
+@Entity({ name: 'tb_usuarios' })
 export class Usuario {
+  @PrimaryGeneratedColumn()
+  @ApiProperty()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    @ApiProperty()
-    id: number;
-    
-    @IsNotEmpty()
-    @Column({ length: 100})
-    @ApiProperty()
-    nome: string;
+  @IsNotEmpty()
+  @Column({ type: 'varchar', length: 100 })
+  @ApiProperty()
+  nome: string;
 
-    @IsNotEmpty()
-    @Column({ length: 100, unique: true})
-    @IsEmail()
-    @ApiProperty({example: 'usuario@email.com'})
-    usuario: string;
-    
-    @MinLength(8)
-    @IsNotEmpty()
-    @Column({ length: 255})
-    @ApiProperty()
-    senha: string;
-    
-    @Column({ length: 5000, nullable: true })
-    @ApiProperty()
-    foto: string;
+  @IsNotEmpty()
+  @IsEmail()
+  @Column({ type: 'varchar', length: 100, unique: true })
+  @ApiProperty({ example: 'usuario@email.com' })
+  usuario: string;
 
-    @ApiProperty()
-    @OneToMany(() => Dados, (dado) => dado.usuario)
-    dados: Dados[];
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  @ApiProperty({ nullable: true })
+  senha: string | null;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: 'LOCAL',
+  })
+  @ApiProperty({ example: 'LOCAL | GOOGLE' })
+  provider: 'LOCAL' | 'GOOGLE';
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  @ApiProperty({ nullable: true })
+  googleId?: string | null;
+
+  @Column({
+    type: 'varchar',
+    length: 5000,
+    nullable: true,
+  })
+  @ApiProperty({ nullable: true })
+  foto?: string | null;
+
+  @OneToMany(() => Dados, (dado) => dado.usuario)
+  @ApiProperty()
+  dados: Dados[];
 }
-

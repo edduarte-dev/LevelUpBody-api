@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -9,7 +12,11 @@ async function bootstrap() {
   const config = new DocumentBuilder()
   .setTitle('Level Up Body API')
   .setDescription('Projeto Level Up Body - Generation Brasil')
-  .setContact("Generation Brasil","http://www.generationbrasil.online","generation@email.com")
+    .setContact(
+      'Generation Brasil',
+      'http://www.generationbrasil.online',
+      'generation@email.com',
+    )
   .setVersion('1.0')
   .addBearerAuth()
   .build();
