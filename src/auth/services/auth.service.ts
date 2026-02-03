@@ -20,7 +20,9 @@ export class AuthService {
     private googleService: GoogleService,
   ) {}
 
-
+  // =========================
+  // LOGIN LOCAL
+  // =========================
   async validateUser(username: string, password: string) {
     const usuario = await this.usuarioService.findByUsuario(username);
 
@@ -47,7 +49,7 @@ export class AuthService {
       throw new UnauthorizedException('Senha inválida');
     }
 
-  
+    // remove senha do retorno
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { senha, ...resultado } = usuario;
     return resultado;
@@ -73,26 +75,24 @@ export class AuthService {
     };
   }
 
-
+  // =========================
+  // LOGIN GOOGLE (CORRIGIDO)
+  // =========================
   async loginWithGoogle(idToken: string) {
     if (!idToken) {
       throw new UnauthorizedException('ID Token não informado');
     }
 
-    let googleUser;
+    // 1️⃣ Valida token com Google
+    const googleUser = await this.googleService.verifyToken(idToken);
 
-    try {
-     
-      googleUser = await this.googleService.verifyToken(idToken);
-    } catch {
-      throw new UnauthorizedException('Token do Google inválido');
-    }
-
+    // 2️⃣ Busca usuário pelo e-mail
     let usuario = await this.usuarioService.findByUsuario(googleUser.email);
 
-  
+    // 3️⃣ Se NÃO existir → cria usuário GOOGLE
     if (!usuario) {
       const novoUsuario: Usuario = {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         id: undefined as any,
         nome: googleUser.nome,
         usuario: googleUser.email,
@@ -105,15 +105,18 @@ export class AuthService {
 
       usuario = await this.usuarioService.create(novoUsuario);
     }
+    // 4️⃣ Se existir → vincula Google se necessário
+    else {
+      if (!usuario.googleId) {
+        usuario.googleId = googleUser.googleId;
+        usuario.provider = 'GOOGLE';
+        usuario.foto = usuario.foto ?? googleUser.foto ?? null;
 
-  
-    if (usuario.provider === 'LOCAL') {
-      throw new HttpException(
-        'Usuário já cadastrado com senha. Use login tradicional.',
-        HttpStatus.CONFLICT,
-      );
+        await this.usuarioService.update(usuario);
+      }
     }
 
+    // 5️⃣ Gera JWT
     const payload = { sub: usuario.usuario };
 
     return {
