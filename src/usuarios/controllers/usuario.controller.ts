@@ -44,4 +44,5 @@ export class UsuarioController {
     async delete (@Param('id', ParseIntPipe) id:number){
         return this.usuarioService.delete(id)
     }
+
 }
