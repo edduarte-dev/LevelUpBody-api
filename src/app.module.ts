@@ -8,6 +8,7 @@ import { UsuarioModule } from './usuarios/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { ClassificacaoImcModule } from './classificacao/classificacao.module';
 import { DevService } from './data/service/dev.service';
+import { ProdService } from './data/service/prod.service';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { DevService } from './data/service/dev.service';
 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useClass: DevService,
+      useClass: ProdService,
     }),
 
     DadosModule,
