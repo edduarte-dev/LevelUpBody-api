@@ -20,9 +20,7 @@ export class AuthService {
     private googleService: GoogleService,
   ) {}
 
-  // =========================
-  // LOGIN LOCAL
-  // =========================
+  
   async validateUser(username: string, password: string) {
     const usuario = await this.usuarioService.findByUsuario(username);
 
@@ -75,21 +73,17 @@ export class AuthService {
     };
   }
 
-  // =========================
-  // LOGIN GOOGLE (CORRIGIDO)
-  // =========================
+
   async loginWithGoogle(idToken: string) {
     if (!idToken) {
       throw new UnauthorizedException('ID Token não informado');
     }
 
-    // 1️⃣ Valida token com Google
+   
     const googleUser = await this.googleService.verifyToken(idToken);
 
-    // 2️⃣ Busca usuário pelo e-mail
     let usuario = await this.usuarioService.findByUsuario(googleUser.email);
 
-    // 3️⃣ Se NÃO existir → cria usuário GOOGLE
     if (!usuario) {
       const novoUsuario: Usuario = {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -105,7 +99,7 @@ export class AuthService {
 
       usuario = await this.usuarioService.create(novoUsuario);
     }
-    // 4️⃣ Se existir → vincula Google se necessário
+
     else {
       if (!usuario.googleId) {
         usuario.googleId = googleUser.googleId;
@@ -116,7 +110,7 @@ export class AuthService {
       }
     }
 
-    // 5️⃣ Gera JWT
+ 
     const payload = { sub: usuario.usuario };
 
     return {

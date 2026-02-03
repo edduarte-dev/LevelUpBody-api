@@ -34,7 +34,7 @@ export class UsuarioService {
     return usuario;
   }
 
-  // ✅ AGORA SUPORTA LOCAL E GOOGLE
+ 
   async create(usuario: Usuario): Promise<Usuario> {
     const usuarioExistente = await this.findByUsuario(usuario.usuario);
 
@@ -52,14 +52,14 @@ export class UsuarioService {
 
       usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
     } else {
-      // GOOGLE
+     
       usuario.senha = null;
     }
 
     return this.usuarioRepository.save(usuario);
   }
 
-  // ✅ NÃO BLOQUEIA VÍNCULO GOOGLE
+  
   async update(usuario: Usuario): Promise<Usuario> {
     const usuarioExistente = await this.findById(usuario.id);
 
@@ -71,7 +71,7 @@ export class UsuarioService {
       );
     }
 
-    // senha só muda se for LOCAL
+    
     if (
       usuarioExistente.provider === 'LOCAL' &&
       usuario.senha &&
