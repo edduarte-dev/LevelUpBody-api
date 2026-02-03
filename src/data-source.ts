@@ -1,9 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-
 import { Usuario } from './usuarios/entities/usuario.entity';
 import { Dados } from './dados/entities/dado.entity';
 import { ClassificacaoImc } from './classificacao/entities/classificacao.entity';
