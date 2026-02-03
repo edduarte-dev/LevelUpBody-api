@@ -14,13 +14,12 @@ import { DevService } from './data/service/dev.service';
 
 @Module({
   imports: [
-   
     ConfigModule.forRoot({
       isGlobal: true,
     }),
 
-   
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule], // 🔥 ISSO É O FIX
       useClass: DevService,
     }),
 

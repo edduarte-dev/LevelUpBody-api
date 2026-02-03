@@ -11,6 +11,7 @@ import { Usuario } from '../../usuarios/entities/usuario.entity';
 
 @Injectable()
 export class DadosService {
+ 
   constructor(
     @InjectRepository(Dados)
     private dadosRepository: Repository<Dados>,
@@ -48,6 +49,21 @@ export class DadosService {
     return dados;
   }
 
+  async findByUsuario(usuarioId: number): Promise<Dados[]> {
+  return this.dadosRepository.find({
+    where: {
+      usuario: { id: usuarioId } as any,
+    },
+    relations: {
+      usuario: true,
+    },
+    order: {
+      id: 'DESC',
+    },
+  });
+
+}
+
   async create(dados: Dados): Promise<Dados> {
     if (dados.altura <= 0) {
       throw new BadRequestException('Altura inválida');
@@ -78,12 +94,29 @@ export class DadosService {
   }
 
   async update(dados: Dados): Promise<Dados> {
-    await this.findById(dados.id);
-    return this.dadosRepository.save(dados);
+  // garante que o dado existe
+  await this.findById(dados.id);
+
+  if (dados.altura <= 0) {
+    throw new BadRequestException('Altura inválida');
   }
+
+  // recalcula IMC
+  const imcCalculado = dados.peso / (dados.altura * dados.altura);
+  const imcFormatado = Number(imcCalculado.toFixed(2));
+
+  dados.imc = imcFormatado;
+  dados.classificacao = this.classificacaoImc(imcFormatado);
+
+  return this.dadosRepository.save(dados);
+}
 
   async delete(id: number): Promise<DeleteResult> {
     await this.findById(id);
     return this.dadosRepository.delete(id);
   }
 }
+
+
+
+

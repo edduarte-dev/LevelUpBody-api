@@ -33,6 +33,13 @@ export class DadosController {
     return this.dadosService.findById(id);
   }
 
+  @Get('/usuario/:id')
+@HttpCode(HttpStatus.OK)
+findByUsuario(@Param('id', ParseIntPipe) id: number) {
+  return this.dadosService.findByUsuario(id);
+}
+
+
   @Post()
   create(@Body() dados: Dados): Promise<Dados> {
     return this.dadosService.create(dados);

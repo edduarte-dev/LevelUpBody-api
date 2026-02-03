@@ -15,11 +15,13 @@ export class DevService implements TypeOrmOptionsFactory {
       type: 'mysql',
       host: this.configService.get<string>('DB_HOST'),
       port: Number(this.configService.get<string>('DB_PORT')),
-      username: this.configService.get<string>('DB_USER'),
+      username: this.configService.get<string>('DB_USERNAME'),
       password: this.configService.get<string>('DB_PASSWORD'),
-      database: this.configService.get<string>('DB_NAME'),
+      database: this.configService.get<string>('DB_DATABASE'),
+
       entities: [Usuario, Dados, ClassificacaoImc],
-      synchronize: false,
+      synchronize: true, // depois você pode desligar
     };
   }
 }
+
