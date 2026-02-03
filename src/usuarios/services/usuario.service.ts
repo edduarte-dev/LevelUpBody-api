@@ -12,7 +12,6 @@ export class UsuarioService {
     private bcrypt: Bcrypt,
   ) {}
 
-
   async findByUsuario(usuario: string): Promise<Usuario | null> {
     return this.usuarioRepository.findOne({
       where: { usuario },
@@ -35,7 +34,7 @@ export class UsuarioService {
     return usuario;
   }
 
-
+  // ✅ AGORA SUPORTA LOCAL E GOOGLE
   async create(usuario: Usuario): Promise<Usuario> {
     const usuarioExistente = await this.findByUsuario(usuario.usuario);
 
@@ -43,22 +42,24 @@ export class UsuarioService {
       throw new HttpException('O usuário já existe!', HttpStatus.BAD_REQUEST);
     }
 
- 
-    usuario.provider = 'LOCAL';
+    if (usuario.provider === 'LOCAL') {
+      if (!usuario.senha) {
+        throw new HttpException(
+          'Senha é obrigatória para cadastro local',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    if (!usuario.senha) {
-      throw new HttpException(
-        'Senha é obrigatória para cadastro local',
-        HttpStatus.BAD_REQUEST,
-      );
+      usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
+    } else {
+      // GOOGLE
+      usuario.senha = null;
     }
-
-    usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
 
     return this.usuarioRepository.save(usuario);
   }
 
- 
+  // ✅ NÃO BLOQUEIA VÍNCULO GOOGLE
   async update(usuario: Usuario): Promise<Usuario> {
     const usuarioExistente = await this.findById(usuario.id);
 
@@ -70,7 +71,7 @@ export class UsuarioService {
       );
     }
 
-  
+    // senha só muda se for LOCAL
     if (
       usuarioExistente.provider === 'LOCAL' &&
       usuario.senha &&
@@ -81,13 +82,12 @@ export class UsuarioService {
       usuario.senha = usuarioExistente.senha;
     }
 
-    usuario.provider = usuarioExistente.provider;
-    usuario.googleId = usuarioExistente.googleId;
+    usuario.provider = usuario.provider ?? usuarioExistente.provider;
+    usuario.googleId = usuario.googleId ?? usuarioExistente.googleId;
 
     return this.usuarioRepository.save(usuario);
   }
 
- 
   async delete(id: number): Promise<DeleteResult> {
     await this.findById(id);
     return this.usuarioRepository.delete(id);
