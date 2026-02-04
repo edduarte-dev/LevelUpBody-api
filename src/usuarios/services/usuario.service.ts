@@ -36,29 +36,44 @@ export class UsuarioService {
 
  
   async create(usuario: Usuario): Promise<Usuario> {
-    const usuarioExistente = await this.findByUsuario(usuario.usuario);
+  const usuarioExistente = await this.findByUsuario(usuario.usuario);
 
-    if (usuarioExistente) {
-      throw new HttpException('O usuário já existe!', HttpStatus.BAD_REQUEST);
+  // 🟢 CASO 1 — Usuário NÃO existe → cria
+  if (!usuarioExistente) {
+    if (!usuario.senha) {
+      throw new HttpException(
+        'Senha é obrigatória para cadastro',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    if (usuario.provider === 'LOCAL') {
-      if (!usuario.senha) {
-        throw new HttpException(
-          'Senha é obrigatória para cadastro local',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
-    } else {
-     
-      usuario.senha = null;
-    }
+    usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
+    usuario.provider = 'LOCAL';
 
     return this.usuarioRepository.save(usuario);
   }
 
+  // 🟡 CASO 2 — Usuário existe, MAS NÃO tem senha (veio do Google)
+  if (!usuarioExistente.senha) {
+    if (!usuario.senha) {
+      throw new HttpException(
+        'Defina uma senha para essa conta',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    usuarioExistente.senha = await this.bcrypt.criptografarSenha(usuario.senha);
+    usuarioExistente.provider = 'LOCAL';
+
+    return this.usuarioRepository.save(usuarioExistente);
+  }
+
+  // 🔴 CASO 3 — Usuário já tem senha
+  throw new HttpException(
+    'Usuário já possui senha cadastrada',
+    HttpStatus.BAD_REQUEST,
+  );
+}
   
   async update(usuario: Usuario): Promise<Usuario> {
     const usuarioExistente = await this.findById(usuario.id);
